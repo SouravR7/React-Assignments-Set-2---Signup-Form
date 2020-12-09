@@ -1,191 +1,168 @@
-import React, { Component, useState } from "react";
+import React from "react";
+//import styles from "./styles";
 import "../styles/App.css";
 
-const initialState = {
-  Name: "",
-  Email: "",
-  PhoneNumber: "",
-  Password: "",
-  Gender: "Male"
-};
-function App() {
-  const [state, setState] = useState(initialState);
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      email: "",
+      gender: "male",
+      phNo: "",
+      password: "",
+      errorMessage: "",
+      userName: ""
+    };
+  }
 
-  let [nameError, setNameError] = useState("");
-  let [passwordError, setPasswordError] = useState("");
-  let [phoneNumberError, setPhoneNumberError] = useState("");
-  let [emailError, setEmailError] = useState("");
-  let [genderError, setGenderError] = useState("");
-  let [errorMessage, setErrorMessage] = useState("");
-  let [userName, setUserName] = useState("");
+  handleNameChange = (event) => {
+    this.setState({ name: event.target.value });
+  };
 
-  const validateName = (name) => {
+  handleEmailChange = (event) => {
+    this.setState({ email: event.target.value });
+  };
+
+  handlePhoneNoChange = (event) => {
+    this.setState({ phNo: event.target.value });
+  };
+
+  handlePasswordChange = (event) => {
+    this.setState({ password: event.target.value });
+  };
+
+  handleChangeValue = (event) => {
+    this.setState({ gender: event.target.value });
+  };
+
+  handleSubmit = () => {
     const alphanumeric = /^[0-9a-zA-Z ]+$/;
-    if (!name.match(alphanumeric)) {
-      setNameError("Name is not alphanumeric");
-      console.log("error");
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const validateEmail = (email) => {
-    if (email.indexOf("@") < 1) {
-      setEmailError("Email must contain @");
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const validatePhoneNumber = (number) => {
     const numbers = /^\d+$/;
-    if (!numbers.test(number)) {
-      setPhoneNumberError("Phone Number must contain only numbers");
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const validatePassword = (pwd) => {
-    if (pwd.length < 6) {
-      setPasswordError("Password must contain atleast 6 letters");
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const validateGender = (gender) => {
-    if (!gender) {
-      setGenderError("Please identify as male, female or others");
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  // const isValidate = (property) => {
-  //   if (property === "Name") {
-  //     validateName();
-  //   } else if (property === "Email") {
-  //     validateEmail();
-  //   } else if (property === "PhoneNumber") {
-  //     validatePhoneNumber();
-  //   } else if (property === "Password") {
-  //     validatePassword();
-  //   } else if (property === "Gender") {
-  //     validateGender();
-  //   }
-  // };
-  const handleChange = (property, event) => {
-    //console.log("vhanged");
-    const stateCopy = { ...state };
-    stateCopy[property] = event.target.value;
-    //console.log(stateCopy[property]);
-    setState(stateCopy);
-    //isValidate(property);
-  };
-
-  const handleSubmit = () => {
     if (
-      state.Name === "" ||
-      state.Email === "" ||
-      state.PhoneNumber === "" ||
-      state.Gender === "" ||
-      state.Password === ""
+      this.state.name === "" ||
+      this.state.email === "" ||
+      this.state.phNo === "" ||
+      this.state.gender === "" ||
+      this.state.password === ""
     ) {
-      setErrorMessage("All fields are mandatory");
-      //return;
-    } else if (
-      validateName(state.Name) &&
-      validateEmail(state.Email) &&
-      validatePhoneNumber(state.PhoneNumber) &&
-      validateGender(state.Gender) &&
-      validatePassword(state.Password)
-    ) {
-      const user = state.email.substring(0, state.email.indexOf("@"));
-      setUserName(user);
-      //setState(initialState);
+      this.setState({ errorMessage: "All fields are mandatory", userName: "" });
+      return;
     }
+    if (!this.state.name.match(alphanumeric)) {
+      this.setState({ errorMessage: "Name is not alphanumeric", userName: "" });
+      return;
+    }
+    if (this.state.email.indexOf("@") < 1) {
+      this.setState({ errorMessage: "Email must contain @", userName: "" });
+      return;
+    }
+
+    if (!this.state.gender) {
+      this.setState({
+        errorMessage: "Please identify as male, female or others",
+        userName: ""
+      });
+      return;
+    }
+    if (!numbers.test(this.state.phNo)) {
+      this.setState({
+        errorMessage: "Phone Number must contain only numbers",
+        userName: ""
+      });
+      return;
+    }
+    if (this.state.password.length < 6) {
+      this.setState({
+        errorMessage: "Password must contain atleast 6 letters",
+        userName: ""
+      });
+      return;
+    }
+    const user = this.state.email.substring(0, this.state.email.indexOf("@"));
+    this.setState({
+      userName: user,
+      errorMessage: "",
+      name: "",
+      email: "",
+      gender: "male",
+      phNo: "",
+      password: ""
+    });
   };
 
-  return (
-    <div id="main">
-      {errorMessage && <div>{errorMessage}</div>}
-      {userName && <div>Hello {userName}</div>}
-      <form onSubmit={handleSubmit}>
+  render() {
+    return (
+      <>
         <div>
-          <label>Name :</label>
-          <input
-            data-testid="name"
-            type="text"
-            value={state.Name}
-            placeholder="name"
-            onChange={(event) => handleChange("Name", event)}
-          />
+          {this.state.errorMessage && <div>{this.state.errorMessage}</div>}
+          {this.state.userName && <div>Hello {this.state.userName}</div>}
+          <div>
+            <label>Name :</label>
+            <input
+              data-testid="name"
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={this.state.name}
+              onChange={this.handleNameChange}
+            />
+          </div>
+          <br />
+          <div>
+            <label>Email :</label>
+            <input
+              data-testid="email"
+              type="text"
+              name="email"
+              placeholder="Email"
+              value={this.state.email}
+              onChange={this.handleEmailChange}
+            />
+          </div>
+          <br />
+          <div>
+            <label>Gender :</label>
+            <input
+              data-testid="gender"
+              type="text"
+              name="gender"
+              value={this.state.gender}
+              onChange={this.handleChangeValue}
+            />
+          </div>
+          <br />
+          <div>
+            <label>Phone No :</label>
+            <input
+              data-testid="phoneNumber"
+              type="text"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              value={this.state.phNo}
+              onChange={this.handlePhoneNoChange}
+            />
+          </div>
+          <br />
+          <div>
+            <label>Password :</label>
+            <input
+              data-testid="password"
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={this.state.password}
+              onChange={this.handlePasswordChange}
+            />
+          </div>
+          <br />
+          <div>
+            <button data-testid="submit" onClick={this.handleSubmit}>
+              Submit
+            </button>
+          </div>
         </div>
-        <div>{nameError}</div>
-        <br />
-        <div>
-          <label>Email address :</label>
-          <input
-            data-testid="email"
-            type="text"
-            value={state.Email}
-            placeholder="email"
-            onChange={(event) => handleChange("Email", event)}
-          />
-        </div>
-        <div>{emailError}</div>
-        <br />
-        <div>
-          <label>Phone Number :</label>
-          <input
-            data-testid="phoneNumber"
-            type="text"
-            value={state.PhoneNumber}
-            placeholder="phone number"
-            onChange={(event) => handleChange("PhoneNumber", event)}
-          />
-        </div>
-        <div>{phoneNumberError}</div>
-        <br />
-        <div>
-          <label>Password :</label>
-          <input
-            data-testid="password"
-            type="password"
-            value={state.Password}
-            placeholder="password"
-            onChange={(event) => handleChange("Password", event)}
-          />
-        </div>
-        <div>{passwordError}</div>
-        <br />
-        <div>
-          <label>Gender :</label>
-          <input
-            data-testid="gender"
-            type="text"
-            value={state.Gender}
-            placeholder="Gender"
-            onChange={(event) => handleChange("Gender", event)}
-          />
-        </div>
-        {genderError.length > 1 ? <div>{genderError}</div> : ""}
-        <br />
-        <div>
-          <button data-testid="submit" type="submit">
-            {" "}
-            Submit{" "}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+      </>
+    );
+  }
 }
-
-export default App;
